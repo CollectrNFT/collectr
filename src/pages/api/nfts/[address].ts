@@ -1,74 +1,52 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import fetch from "node-fetch";
+import type { NextApiResponse } from "next";
+import { createAlchemyWeb3, GetNftMetadataResponse } from "@alch/alchemy-web3";
+import { transformNFTSData } from "@/common/api_helpers/utils";
+import { base } from "@/middleware/base";
 
-type Data = {
+const web3 = createAlchemyWeb3(process.env.ALCHEMY_API_MAINNET);
+
+export type NFTS_API_DATA = {
   success: boolean;
-  data: any;
+  data: GetNftMetadataResponse[];
 };
 
-type Error = {
+export type NFTS_API_ERROR = {
   error: string;
 };
-const MORALIS_BASE_URL = "https://deep-index.moralis.io/api/v2/";
 
-const getNFTs = async (address: string) => {
-  const response = await fetch(
-    `https://deep-index.moralis.io/api/v2/0x084B728f2BD0B84e58d2B22c05809A4cDb8EC1b9/nft?chain=eth&format=decimal`,
-    {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        "X-API-KEY":
-          "CnXibdTyi9uuzW5KHoGl9703J0a0somF7l7stRMs9SFhyBlUfrZ9D2ZYVeWMhaWB",
-      },
-    }
-  );
-  const data = ((await response.json()) as any)?.result;
-  const cleanedData = data
-    .filter((i) => i.token_uri)
-    .map((i) => {
-      if (i.token_uri[0] === "Q") {
-        i.token_uri = "https://ipfs.io/ipfs/" + i.token_uri;
-      }
-      return i;
+const getAndFormatNFTS = async (address: string) => {
+  try {
+    const nfts = await web3.alchemy.getNfts({
+      owner: address,
     });
-  let tokenResult = await Promise.all(
-    (
-      await Promise.all(
-        cleanedData.map((i) => fetch(i.token_uri, { method: "GET" }))
-      )
-    )
-      .filter((i) => i.status === 200)
-      .map((i) => i.json())
-  );
-  tokenResult = tokenResult.map((i) => {
-    if (i.image.slice(0, 4) === "ipfs") {
-      i.image = "https://ipfs.io/ipfs/" + i.image.slice(7);
-    }
-    return i;
-  });
 
-  const mergedAttributeArray = tokenResult.map((i, idx) => {
-    return { ...cleanedData[idx], ...i };
-  });
-  return mergedAttributeArray;
+    const nftDataPromiseArray = nfts.ownedNfts.map((nft) => {
+      return web3.alchemy.getNftMetadata({
+        contractAddress: nft.contract.address,
+        tokenId: nft.id.tokenId,
+      });
+    });
+
+    const fetchedNFTData = await Promise.all(nftDataPromiseArray);
+    const transformedNFT = transformNFTSData(fetchedNFTData);
+    return transformedNFT;
+  } catch (e) {
+    // TODO add proper error logging
+
+    console.log(e);
+  }
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data | Error>
-) {
-  const {
-    method,
-    query: { address },
-  } = req;
-
-  switch (method) {
-    case "GET":
-      const data = await getNFTs(address as string);
+export default base().get(
+  async (req, res: NextApiResponse<NFTS_API_DATA | NFTS_API_ERROR>) => {
+    const {
+      query: { address },
+    } = req;
+    if (typeof address === "string") {
+      const data = await getAndFormatNFTS(address);
       return res.status(200).json({ success: true, data });
-
-    default:
-      res.status(400).json({ error: "This is a bad request" });
+    } else {
+      return res.status(400).json({ error: "address is incorrect" });
+    }
   }
-}
+);

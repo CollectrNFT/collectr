@@ -15,3 +15,7 @@ export type NFTData = {
   token_id: string;
   token_uri: string;
 };
+
+export enum API_ERROR_CODES {
+  USERNAME_ALREADY_TAKEN = 1,
+}

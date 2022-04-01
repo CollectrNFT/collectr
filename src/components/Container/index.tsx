@@ -1,5 +1,5 @@
 import { As, Box, ChakraProps, OmitCommonProps } from "@chakra-ui/react";
-import React, { FC, useEffect, useState } from "react";
+import React from "react";
 
 export const Container = (
   props: JSX.IntrinsicAttributes &

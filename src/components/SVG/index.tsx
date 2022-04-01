@@ -1,4 +1,9 @@
-import { Box, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  useColorMode,
+  useColorModeValue,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { useEffect } from "react";
 import { animated, useSpring } from "react-spring";
 
@@ -245,7 +250,7 @@ export const Opensea = () => (
 
 export const FooterLogo = () => (
   <svg
-    width="100%"
+    width="95%"
     height="100%"
     viewBox="0 0 1440 182"
     fill="none"
@@ -337,4 +342,622 @@ export const CloseButton = () => (
     />
     <rect x="0.5" y="0.5" width="63" height="63" rx="31.5" stroke="black" />
   </Box>
+);
+
+export const MintSVGBlock = () => {
+  const [sm, md, lg, xl, xxl] = useMediaQuery([
+    "(max-width: 767px)",
+    "(min-width: 768px) and (max-width: 1023px)",
+    "(min-width: 1024px) and (max-width: 1199px)",
+    "(min-width: 1200px) and (max-width: 1439px)",
+    "(min-width: 1440px)",
+  ]);
+
+  const xtraLargest = (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 1290 430"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="215"
+        height="215"
+        transform="translate(1075)"
+        fill="#FFC700"
+      />
+      <g clipPath="url(#clip0_1068_6631)">
+        <rect x="1075" y="107.5" width="215" height="215" fill="#0052F1" />
+      </g>
+      <g clipPath="url(#clip1_1068_6631)">
+        <circle cx="1182.5" cy="215" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430 215)"
+        fill="#DF0000"
+      />
+      <rect x="430" y="215" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="537.5" cy="268.75" r="53.75" fill="#FFC700" />
+      <rect width="215" height="215" fill="#0052F1" />
+      <g clipPath="url(#clip2_1068_6631)">
+        <rect x="107.5" width="215" height="215" fill="#06B8C3" />
+      </g>
+      <g clipPath="url(#clip3_1068_6631)">
+        <circle cy="215" r="107.5" fill="#FF6914" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645 215)"
+        fill="#4927A9"
+      />
+      <rect x="752.5" y="322.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <g clipPath="url(#clip4_1068_6631)">
+        <circle cx="860" cy="430" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215 215)"
+        fill="black"
+      />
+      <rect x="268.75" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <g clipPath="url(#clip5_1068_6631)">
+        <circle cx="430" cy="322.5" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(0 215)"
+        fill="black"
+      />
+      <rect y="215" width="107.5" height="107.5" fill="#FF6914" />
+      <g clipPath="url(#clip6_1068_6631)">
+        <circle cy="322.5" r="107.5" fill="#0052F1" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(1075 215)"
+        fill="#0052F1"
+      />
+      <rect
+        x="1128.75"
+        y="268.75"
+        width="161.25"
+        height="161.25"
+        fill="white"
+      />
+      <circle cx="1182.5" cy="322.5" r="107.5" fill="#DF0000" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(860 215)"
+        fill="#06B8C3"
+      />
+      <rect x="860" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <circle cx="913.75" cy="268.75" r="53.75" fill="#FF78C9" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645)"
+        fill="#3FBAFF"
+      />
+      <rect x="752.5" y="107.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="752.5" cy="53.75" r="53.75" fill="#007319" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215)"
+        fill="#06B8C3"
+      />
+      <rect x="268.75" y="53.75" width="161.25" height="161.25" fill="white" />
+      <g clipPath="url(#clip7_1068_6631)">
+        <circle cx="322.5" cy="215" r="107.5" fill="#4927A9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(860)"
+        fill="#DF0000"
+      />
+      <g clipPath="url(#clip8_1068_6631)">
+        <rect x="860" y="107.5" width="215" height="215" fill="#0052F1" />
+      </g>
+      <g clipPath="url(#clip9_1068_6631)">
+        <circle cx="967.5" r="107.5" fill="white" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430)"
+        fill="#3FBAFF"
+      />
+      <rect x="483.75" width="107.5" height="107.5" fill="#4927A9" />
+      <circle cx="483.75" cy="53.75" r="53.75" fill="#DF0000" />
+      <defs>
+        <clipPath id="clip0_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(1075)"
+          />
+        </clipPath>
+        <clipPath id="clip1_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(1075)"
+          />
+        </clipPath>
+        <clipPath id="clip2_1068_6631">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip3_1068_6631">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip4_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(645 215)"
+          />
+        </clipPath>
+        <clipPath id="clip5_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215 215)"
+          />
+        </clipPath>
+        <clipPath id="clip6_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(0 215)"
+          />
+        </clipPath>
+        <clipPath id="clip7_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215)"
+          />
+        </clipPath>
+        <clipPath id="clip8_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(860)"
+          />
+        </clipPath>
+        <clipPath id="clip9_1068_6631">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(860)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  const xtraLarge = (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 1075 430"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430 215)"
+        fill="#DF0000"
+      />
+      <rect x="430" y="215" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="537.5" cy="268.75" r="53.75" fill="#FFC700" />
+      <rect width="215" height="215" fill="#0052F1" />
+      <g clipPath="url(#clip0_222_2766)">
+        <rect x="107.5" width="215" height="215" fill="#06B8C3" />
+      </g>
+      <g clipPath="url(#clip1_222_2766)">
+        <circle cy="215" r="107.5" fill="#FF6914" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645 215)"
+        fill="#4927A9"
+      />
+      <rect x="752.5" y="322.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <g clipPath="url(#clip2_222_2766)">
+        <circle cx="860" cy="430" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215 215)"
+        fill="black"
+      />
+      <rect x="268.75" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <g clipPath="url(#clip3_222_2766)">
+        <circle cx="430" cy="322.5" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(0 215)"
+        fill="black"
+      />
+      <rect y="215" width="107.5" height="107.5" fill="#FF6914" />
+      <g clipPath="url(#clip4_222_2766)">
+        <circle cy="322.5" r="107.5" fill="#0052F1" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(860 215)"
+        fill="#06B8C3"
+      />
+      <rect x="860" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <circle cx="913.75" cy="268.75" r="53.75" fill="#FF78C9" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645)"
+        fill="#3FBAFF"
+      />
+      <rect x="752.5" y="107.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="752.5" cy="53.75" r="53.75" fill="#007319" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215)"
+        fill="#06B8C3"
+      />
+      <rect x="268.75" y="53.75" width="161.25" height="161.25" fill="white" />
+      <g clipPath="url(#clip5_222_2766)">
+        <circle cx="322.5" cy="215" r="107.5" fill="#4927A9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(860)"
+        fill="#DF0000"
+      />
+      <g clipPath="url(#clip6_222_2766)">
+        <rect x="860" y="107.5" width="215" height="215" fill="#0052F1" />
+      </g>
+      <g clipPath="url(#clip7_222_2766)">
+        <circle cx="967.5" r="107.5" fill="white" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430)"
+        fill="#3FBAFF"
+      />
+      <rect x="483.75" width="107.5" height="107.5" fill="#4927A9" />
+      <circle cx="483.75" cy="53.75" r="53.75" fill="#DF0000" />
+      <defs>
+        <clipPath id="clip0_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip1_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip2_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(645 215)"
+          />
+        </clipPath>
+        <clipPath id="clip3_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215 215)"
+          />
+        </clipPath>
+        <clipPath id="clip4_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(0 215)"
+          />
+        </clipPath>
+        <clipPath id="clip5_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215)"
+          />
+        </clipPath>
+        <clipPath id="clip6_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(860)"
+          />
+        </clipPath>
+        <clipPath id="clip7_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(860)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  const large = (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 860 430"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430 215)"
+        fill="#DF0000"
+      />
+      <rect x="430" y="215" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="537.5" cy="268.75" r="53.75" fill="#FFC700" />
+      <rect width="215" height="215" fill="#0052F1" />
+      <g clipPath="url(#clip0_222_2766)">
+        <rect x="107.5" width="215" height="215" fill="#06B8C3" />
+      </g>
+      <g clipPath="url(#clip1_222_2766)">
+        <circle cy="215" r="107.5" fill="#FF6914" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645 215)"
+        fill="#4927A9"
+      />
+      <rect x="752.5" y="322.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <g clipPath="url(#clip2_222_2766)">
+        <circle cx="860" cy="430" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215 215)"
+        fill="black"
+      />
+      <rect x="268.75" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <g clipPath="url(#clip3_222_2766)">
+        <circle cx="430" cy="322.5" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(0 215)"
+        fill="black"
+      />
+      <rect y="215" width="107.5" height="107.5" fill="#FF6914" />
+      <g clipPath="url(#clip4_222_2766)">
+        <circle cy="322.5" r="107.5" fill="#0052F1" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(645)"
+        fill="#3FBAFF"
+      />
+      <rect x="752.5" y="107.5" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="752.5" cy="53.75" r="53.75" fill="#007319" />
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215)"
+        fill="#06B8C3"
+      />
+      <rect x="268.75" y="53.75" width="161.25" height="161.25" fill="white" />
+      <g clipPath="url(#clip5_222_2766)">
+        <circle cx="322.5" cy="215" r="107.5" fill="#4927A9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430)"
+        fill="#3FBAFF"
+      />
+      <rect x="483.75" width="107.5" height="107.5" fill="#4927A9" />
+      <circle cx="483.75" cy="53.75" r="53.75" fill="#DF0000" />
+      <defs>
+        <clipPath id="clip0_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip1_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip2_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(645 215)"
+          />
+        </clipPath>
+        <clipPath id="clip3_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215 215)"
+          />
+        </clipPath>
+        <clipPath id="clip4_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(0 215)"
+          />
+        </clipPath>
+        <clipPath id="clip5_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  const other = (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 645 430"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430 215)"
+        fill="#DF0000"
+      />
+      <rect x="430" y="215" width="107.5" height="107.5" fill="#FF78C9" />
+      <circle cx="537.5" cy="268.75" r="53.75" fill="#FFC700" />
+      <rect width="215" height="215" fill="#0052F1" />
+      <g clipPath="url(#clip0_222_2766)">
+        <rect x="107.5" width="215" height="215" fill="#06B8C3" />
+      </g>
+      <g clipPath="url(#clip1_222_2766)">
+        <circle cy="215" r="107.5" fill="#FF6914" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215 215)"
+        fill="black"
+      />
+      <rect x="268.75" y="215" width="161.25" height="161.25" fill="#FF6914" />
+      <g clipPath="url(#clip2_222_2766)">
+        <circle cx="430" cy="322.5" r="107.5" fill="#FF78C9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(0 215)"
+        fill="black"
+      />
+      <rect y="215" width="107.5" height="107.5" fill="#FF6914" />
+      <g clipPath="url(#clip3_222_2766)">
+        <circle cy="322.5" r="107.5" fill="#0052F1" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(215)"
+        fill="#06B8C3"
+      />
+      <rect x="268.75" y="53.75" width="161.25" height="161.25" fill="white" />
+      <g clipPath="url(#clip4_222_2766)">
+        <circle cx="322.5" cy="215" r="107.5" fill="#4927A9" />
+      </g>
+      <rect
+        width="215"
+        height="215"
+        transform="translate(430)"
+        fill="#3FBAFF"
+      />
+      <rect x="483.75" width="107.5" height="107.5" fill="#4927A9" />
+      <circle cx="483.75" cy="53.75" r="53.75" fill="#DF0000" />
+      <defs>
+        <clipPath id="clip0_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip1_222_2766">
+          <rect width="215" height="215" fill="white" />
+        </clipPath>
+        <clipPath id="clip2_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215 215)"
+          />
+        </clipPath>
+        <clipPath id="clip3_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(0 215)"
+          />
+        </clipPath>
+        <clipPath id="clip4_222_2766">
+          <rect
+            width="215"
+            height="215"
+            fill="white"
+            transform="translate(215)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+  return (
+    <>
+      {xxl && xtraLargest}
+      {xl && xtraLarge}
+      {lg && large}
+      {(sm || md) && other}
+    </>
+  );
+};
+
+export const EthereumLogo = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.9355 0.301758L11.7779 0.837638V16.3876L11.9355 16.545L19.1536 12.2784L11.9355 0.301758Z"
+      fill="#222222"
+    />
+    <path
+      d="M11.9356 0.301758L4.71751 12.2784L11.9356 16.545V8.99755V0.301758Z"
+      fill="#222222"
+    />
+    <path
+      d="M11.9354 17.9119L11.8466 18.0203V23.5595L11.9354 23.819L19.1579 13.6475L11.9354 17.9119Z"
+      fill="#222222"
+    />
+    <path
+      d="M11.9356 23.819V17.9119L4.71751 13.6475L11.9356 23.819Z"
+      fill="#222222"
+    />
+  </svg>
 );

@@ -19,23 +19,22 @@ interface IImageItem {
 /**
  * Fn scales an image so that it takes up the entire viewport * 1.1
  */
+
 const maxZoomHandler = ({ width, height, viewport }) => {
   let scale2 = [0, 0, 0];
   const scenario1 = [
-    (((width / window.innerWidth) * viewport.width) /
-      (height / window.innerHeight)) *
-      1.1,
-    viewport.height * 1.1,
+    ((width / window.innerWidth) * viewport.width * 1.25) /
+      (height / window.innerHeight),
+    viewport.height * 1.25,
     1,
   ];
   const scenario2 = [
-    viewport.width * 1.1,
-    (((height / window.innerHeight) * viewport.height) /
-      (width / window.innerWidth)) *
-      1.1,
+    viewport.width * 1.25,
+    ((height / window.innerHeight) * viewport.height * 1.25) /
+      (width / window.innerWidth),
     1,
   ];
-  if (viewport.height > viewport.width) {
+  if (width > height || viewport.height > viewport.width) {
     scale2 = scenario1;
   } else {
     scale2 = scenario2;
@@ -58,31 +57,32 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
     currentZoom,
     galleryItemIdx,
     galleryLength,
-    shouldZoomIn,
     setGalleryItemIdx,
     setProgressValue,
-    setShouldZoomIn,
     setShowBar,
     zoomIn,
     zoomOut,
+    isEndGallery,
   } = galleryStore(
     (state) => ({
+      isEndGallery: state.isEndGallery,
       distanceBtwnAssets: state.distanceBtwnAssets,
       viewingAbout: state.viewingAbout,
       maxZoom: state.maxZoom,
       currentZoom: state.currentZoom,
       galleryLength: state.galleryLength,
       galleryItemIdx: state.galleryItemIdx,
-      shouldZoomIn: state.shouldZoomIn,
       setProgressValue: state.setProgressValue,
       setGalleryItemIdx: state.setGalleryItemIdx,
-      setShouldZoomIn: state.setShouldZoomIn,
       setShowBar: state.setShowBar,
       zoomIn: state.zoomIn,
       zoomOut: state.zoomOut,
     }),
     shallow
   );
+  const { width, height } = texture.image;
+
+  const { viewport, camera } = useThree();
 
   const { setIcon } = mousePositionStore(
     (state) => ({
@@ -91,16 +91,15 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
     shallow
   );
 
-  let initialPosition = useMemo(
-    () => [distanceBtwnAssets * idx, 0, 0],
-    [distanceBtwnAssets, idx]
-  );
-
   const mesh =
     useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
       null
     );
 
+  let initialPosition = useMemo(
+    () => [distanceBtwnAssets * idx, 0, 0],
+    [distanceBtwnAssets, idx]
+  );
   const [{ position }, api] = useSpring(() => {
     return {
       position: initialPosition,
@@ -110,10 +109,12 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
 
   useFrame(({}, delta) => {
     let scale: number[];
+    let lambda = 3;
     if (currentZoom === ZoomLevels.MaxZoom && idx === galleryItemIdx) {
+      lambda = 3;
       scale = maxZoomHandler({ width, height, viewport });
     } else if (currentZoom === ZoomLevels.Zoom) {
-      const scaleFactor = viewingAbout ? 0.5 : 0.7;
+      let scaleFactor = viewingAbout ? 0.5 : 0.7;
       if (viewingAbout) {
         scale = [
           window.innerWidth * 0.26,
@@ -122,36 +123,66 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
           1,
         ];
       } else {
-        scale =
-          viewport.width > viewport.height
-            ? [
-                (((width / window.innerWidth) * viewport.width) /
-                  (height / window.innerHeight)) *
-                  scaleFactor,
-                viewport.height * scaleFactor,
-                1,
-              ]
-            : [
-                viewport.width * scaleFactor,
-                (((height / window.innerHeight) * viewport.height) /
-                  (width / window.innerWidth)) *
-                  scaleFactor,
-                1,
-              ];
+        if (viewport.width > viewport.height) {
+          if (width / height > viewport.width / viewport.height) {
+            scaleFactor = height / width;
+          }
+          scale = [
+            (((width / window.innerWidth) * viewport.width) /
+              (height / window.innerHeight)) *
+              scaleFactor,
+            viewport.height * scaleFactor,
+            1,
+          ];
+        } else {
+          if (height / width > viewport.height / viewport.width) {
+            scaleFactor = 0.5;
+          }
+          scale = [
+            viewport.width * scaleFactor,
+            (((height / window.innerHeight) * viewport.height) /
+              (width / window.innerWidth)) *
+              scaleFactor,
+            1,
+          ];
+        }
       }
     } else {
-      if (width > height) {
-        scale = [200, 200 * (height / width), 1];
-      } else if (height > width) {
-        scale = [200 * (width / height), 200, 1];
+      lambda = 3;
+      let size = 200;
+      if (window.innerWidth >= 600) {
+        if (width > height) {
+          scale = [size, size * (height / width), 1];
+        } else if (height > width) {
+          scale = [size * (width / height), size, 1];
+        } else {
+          scale = [size * 0.9, size * 0.9, 1];
+        }
+      } else if (window.innerWidth < 600 && window.innerWidth >= 400) {
+        size = 150;
+        if (width > height) {
+          scale = [size, size * (height / width), 1];
+        } else if (height > width) {
+          scale = [size * (width / height), size, 1];
+        } else {
+          scale = [size * 0.9, size * 0.9, 1];
+        }
       } else {
-        scale = [180, 180, 1];
+        size = 150;
+        if (width > height) {
+          scale = [size, size * (height / width), 1];
+        } else if (height > width) {
+          scale = [size * (width / height), size, 1];
+        } else {
+          scale = [size * 0.9, size * 0.9, 1];
+        }
       }
     }
 
-    mesh.current.scale.x = damp(mesh.current.scale.x, scale[0], 4, delta);
-    mesh.current.scale.y = damp(mesh.current.scale.y, scale[1], 4, delta);
+    mesh.current.scale.x = damp(mesh.current.scale.x, scale[0], lambda, delta);
+    mesh.current.scale.y = damp(mesh.current.scale.y, scale[1], lambda, delta);
   });
+
   //  Shifts Item to the right when in viewing mode
   useEffect(() => {
     if (galleryItemIdx === idx) {
@@ -163,11 +194,19 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
             initialPosition[2],
           ],
         });
+      } else if (isEndGallery) {
+        api.start({
+          position: [
+            initialPosition[0] - window.innerWidth * 0.5,
+            initialPosition[1],
+            initialPosition[2],
+          ],
+        });
       } else {
         api.start({ position: initialPosition });
       }
     }
-  }, [viewingAbout, galleryItemIdx, api, idx, initialPosition]);
+  }, [viewingAbout, galleryItemIdx, api, idx, initialPosition, isEndGallery]);
 
   const isDragging = useRef(null);
 
@@ -187,7 +226,7 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
           idx === galleryItemIdx &&
           currentZoom === ZoomLevels.Zoom
         ) {
-          setShowBar(true);
+          setShowBar(false);
         } else {
           setShowBar(false);
         }
@@ -221,7 +260,6 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
           const dir = xDir > 0 ? -1 : 1;
           const clampIdx = clamp(galleryItemIdx + dir, 0, galleryLength - 1);
           setGalleryItemIdx(clampIdx);
-          setShouldZoomIn(true);
           cancel();
         }
 
@@ -234,9 +272,9 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
             ],
           });
         } else if (!active && currentZoom === ZoomLevels.Zoom) {
-          api.set({ position: initialPosition });
+          api.start({ position: initialPosition });
         }
-        setProgressValue(initialPosition[0] + -mx); //TODO: magic number fix
+        setProgressValue(initialPosition[0] + -mx);
         if (first) {
           isDragging.current = true;
         }
@@ -244,7 +282,7 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
           requestAnimationFrame(() => (isDragging.current = false));
         }
       },
-      onClick: ({ event }) => {
+      onClick: () => {
         if (isDragging.current) return;
         if (
           !viewingAbout &&
@@ -254,18 +292,12 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
         ) {
           if (currentZoom == ZoomLevels.MaxZoom) {
             zoomOut();
-            setShouldZoomIn(false);
           } else if (currentZoom == ZoomLevels.NoZoom) {
             zoomIn();
             setGalleryItemIdx(idx);
-            setShouldZoomIn(true);
           } else {
             if (idx === galleryItemIdx) {
-              if (shouldZoomIn) {
-                zoomIn();
-              } else {
-                zoomOut();
-              }
+              zoomIn();
             }
           }
         }
@@ -274,13 +306,9 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
     { drag: { delay: 500 } }
   );
 
-  const { width, height } = texture.image;
-
-  const { viewport, camera } = useThree();
-
   const { opacity } = useSpring({
     opacity:
-      currentZoom !== ZoomLevels.NoZoom && idx !== galleryItemIdx ? 0 : 1,
+      idx !== galleryItemIdx && currentZoom === ZoomLevels.MaxZoom ? 0 : 1,
   });
 
   useEffect(() => {
@@ -290,6 +318,7 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
   return (
     <>
       {/*@ts-ignore*/}
+
       <a.mesh
         {...(!viewingAbout && bind())}
         position={position as any}
@@ -311,6 +340,10 @@ export const ImageItem: FC<IImageItem> = ({ isTouch, texture, idx }) => {
           transparent={true}
           map={texture}
         />
+      </a.mesh>
+      <a.mesh scale={[200, 200, 1]} position={position as any}>
+        <planeBufferGeometry attach="geometry" />
+        <a.meshBasicMaterial color="green" opacity={0} transparent={true} />
       </a.mesh>
     </>
   );

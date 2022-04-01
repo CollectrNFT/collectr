@@ -1,14 +1,19 @@
+import { isObjectEmpty } from "@/common/utils";
+import { useCheckOwnsCollectr } from "@/data/useCheckOwnsCollectr";
+import { useGetProfile } from "@/data/useGetProfile";
+import { OWNS_COLLECTR_API_DATA } from "@/pages/api/nfts/ownsCollectr/[address]";
 import {
   Box,
   Button,
-  useBreakpointValue,
+  useBreakpointValue as getBreakpoints,
   useDisclosure,
+  Link,
 } from "@chakra-ui/react";
 import useSize from "@react-hook/size";
 import useWindowScroll from "@react-hook/window-scroll";
 import React, { useEffect, useRef, useState } from "react";
 import { animated, config, useSpring } from "react-spring";
-import { useConnect } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { ConnectedButton } from "../Buttons/Connected";
 import { ConnectWalletButton } from "../Buttons/ConnectWallet";
 import { Drawer } from "../Drawer";
@@ -16,13 +21,37 @@ import { Logo, MenuItem } from "../SVG";
 
 interface Props {}
 
-export const Navbar = ({ staticLogo = false, bg = "white" }) => {
+export const Navbar = ({
+  staticLogo = false,
+  bg = "white",
+  hideWallet = false,
+}) => {
+  const [{ data, loading: loadingAccount }] = useAccount();
+  const { profile } = useGetProfile(data?.address);
+  const { collectrNFT } = useCheckOwnsCollectr(data?.address);
+  const [collectrPass, setCollectrPass] = useState({} as any);
+
+  useEffect(() => {
+    if (profile && collectrNFT) {
+      setCollectrPass(
+        (collectrNFT as OWNS_COLLECTR_API_DATA)?.data?.find(
+          (i) => i.id.tokenId === profile.passTokenId
+        )
+      );
+    } else if (collectrNFT) {
+      setCollectrPass(
+        (collectrNFT as OWNS_COLLECTR_API_DATA)?.data?.sort(
+          (a, b) => parseInt(a.id.tokenId) - parseInt(b.id.tokenId)
+        )[0]
+      );
+    }
+  }, [profile, collectrNFT]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
   const menuBtnHandler = (handler: () => void) => {
     handler();
   };
-  const logo = useBreakpointValue({
+  const logo = getBreakpoints({
     sm: { width: 64, height: 64 },
     md: { width: 100, height: 100 },
     lg: { width: 140, height: 140 },
@@ -30,7 +59,6 @@ export const Navbar = ({ staticLogo = false, bg = "white" }) => {
 
   const scrollY = useWindowScroll(60);
   const target = React.useRef(null);
-  const [_, height] = useSize(target);
 
   const calcLogo = ({ width = 60, height = 60 }) => {
     const decTotal = width - 32;
@@ -56,11 +84,14 @@ export const Navbar = ({ staticLogo = false, bg = "white" }) => {
     paddingBottom: shouldStick ? 12 : 12,
     config: config.default,
   });
-
   const AnimatedBox = animated(Box);
   return (
-    <Box position="relative">
-      <Box display={shouldStick ? "inherit" : "none"} height={`${height}px`} />
+    <Box
+      background={bg}
+      position="sticky"
+      zIndex={2}
+      sx={{ top: "0px", left: "0px", right: "0px" }}
+    >
       <AnimatedBox
         ref={target}
         display="flex"
@@ -69,33 +100,44 @@ export const Navbar = ({ staticLogo = false, bg = "white" }) => {
         style={style}
         sx={{
           position: "relative",
-          px: "32px",
+          px: ["24px", null, null, "32px"],
           zIndex: 2,
-          ...(shouldStick && {
-            position: "fixed",
-            top: "0px",
-            left: "0px",
-            right: "0px",
-          }),
         }}
       >
-        {staticLogo ? (
-          <Logo width={32} height={32} />
-        ) : (
-          logo && <Logo {...calcLogo(logo)} />
-        )}{" "}
+        <Link cursor="pointer" href="/">
+          {collectrPass && !isObjectEmpty(collectrPass) ? (
+            <Box
+              sx={{ "& > svg": { width: "32px", height: "32px" } }}
+              dangerouslySetInnerHTML={{
+                __html: Buffer.from(
+                  collectrPass?.media[0].gateway.split(",")[1] ?? "",
+                  "base64"
+                ).toString(),
+              }}
+            />
+          ) : (
+            <Logo width={32} height={32} />
+          )}
+        </Link>
         <Box display="flex">
-          <Box display={["none", null, "inherit"]} maxW={"180px"} height="40px">
-            {connected ? (
-              <ConnectedButton placement="bottom-end" />
-            ) : (
-              <ConnectWalletButton />
-            )}
-          </Box>
+          {!hideWallet && (
+            <Box
+              display={["none", null, "inherit"]}
+              maxW={"180px"}
+              height="40px"
+            >
+              {connected ? (
+                <ConnectedButton placement="bottom-end" />
+              ) : (
+                <ConnectWalletButton />
+              )}
+            </Box>
+          )}
           <Box
             cursor="pointer"
             mt="11px"
             ml="35px"
+            zIndex={4}
             onClick={() => menuBtnHandler(isOpen ? onClose : onOpen)}
             ref={btnRef}
           >

@@ -1,16 +1,10 @@
 import React, { FC, useEffect } from "react";
 import {
   Box,
-  Button,
   Drawer as ChakraDrawer,
-  DrawerBody,
   DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
   DrawerOverlay,
-  Input,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { ColoredLogo, ExternalLink, MenuItem } from "../SVG";
 import { ConnectWalletButton } from "../Buttons/ConnectWallet";
@@ -18,6 +12,7 @@ import { useConnect } from "wagmi";
 import { ConnectedButton } from "../Buttons/Connected";
 import Router from "next/router";
 import mousePositionStore from "@/stores/mousePositionStore";
+import { ClientOnly } from "../UtilityComponents/ClientOnly";
 
 interface IDrawer {
   isOpen: boolean;
@@ -27,13 +22,21 @@ interface IDrawer {
 
 const navItems = [
   { title: "Home", link: "/" },
-  { title: "About", link: "/" },
-  { title: "Collections", link: "/" },
-  { title: "Membership", link: "/" },
-  { title: "FAQs", link: "/" },
+  { title: "About", link: "/about" },
+  { title: "Collections", link: "/collection" },
+  { title: "Membership", link: "/members" },
+  { title: "FAQs", link: "/faq" },
   { title: "Opensea", link: "/", icon: <ExternalLink /> },
-  { title: "Discord", link: "/", icon: <ExternalLink /> },
-  { title: "Twitter", link: "/", icon: <ExternalLink /> },
+  {
+    title: "Discord",
+    link: "https://discord.gg/k6m6a3NsG2",
+    icon: <ExternalLink />,
+  },
+  {
+    title: "Twitter",
+    link: "https://twitter.com/collectr_nft",
+    icon: <ExternalLink />,
+  },
 ];
 
 export const Drawer: FC<IDrawer> = ({ isOpen, onClose, btnRef }) => {
@@ -50,15 +53,26 @@ export const Drawer: FC<IDrawer> = ({ isOpen, onClose, btnRef }) => {
     setIsDrawerOpen(isOpen);
   }, [isOpen, setIsDrawerOpen]);
   return (
-    <ChakraDrawer isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef}>
+    <Inner
+      isOpen={isOpen}
+      onClose={onClose}
+      btnRef={btnRef}
+      connected={connected}
+    />
+  );
+};
+
+export const Inner = ({ isOpen, onClose, btnRef, connected }) => (
+  <ChakraDrawer isOpen={isOpen} onClose={onClose} finalFocusRef={btnRef}>
+    <ClientOnly>
       <DrawerOverlay />
       <DrawerContent
         minW={["100%", null, "488px"]}
         pt="33px"
         pl={["24px", null, null, "64px"]}
-        overflowY="scroll"
         sx={{
-          overflow: "scroll",
+          overflowX: "none",
+          overflowY: "scroll",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
           "&::-webkit-scrollbar": {
@@ -113,7 +127,7 @@ export const Drawer: FC<IDrawer> = ({ isOpen, onClose, btnRef }) => {
                   sx={{ transitionDuration: "0.2s" }}
                   _hover={{ transform: "translateX(25px)" }}
                 >
-                  <Text fontSize="2rem" fontWeight="500" cursor="pointer">
+                  <Text variant={"32"} cursor="pointer">
                     {navItem.title}
                   </Text>
                   <Box pr="30px">{navItem.icon}</Box>
@@ -123,6 +137,6 @@ export const Drawer: FC<IDrawer> = ({ isOpen, onClose, btnRef }) => {
           })}
         </Box>
       </DrawerContent>
-    </ChakraDrawer>
-  );
-};
+    </ClientOnly>
+  </ChakraDrawer>
+);

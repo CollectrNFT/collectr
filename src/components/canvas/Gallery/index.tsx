@@ -8,39 +8,42 @@ import galleryStore, { ZoomLevels } from "../../../stores/galleryStore";
 import shallow from "zustand/shallow";
 import { ImageItem } from "../GalleryItem";
 import { useMediaQuery } from "@chakra-ui/react";
-import { clamp, debounce } from "lodash";
-
+import { clamp } from "lodash";
+import { GetNftMetadataResponse } from "@alch/alchemy-web3";
 const generateZoomBounds = ({ width, height, viewport }) => {
-  // TODO: fix 2.5 magic number
   let scale2 = [0, 0];
+  const resize1 =
+    ((width / window.innerWidth) * viewport.width) /
+    (height / window.innerHeight);
+  const resize2 =
+    ((height / window.innerHeight) * viewport.height) /
+    (width / window.innerWidth);
   const scenario1 = [
-    ((((width / window.innerWidth) * viewport.width) /
-      (height / window.innerHeight)) *
-      1.15) /
-      2,
-    (viewport.height * 0.5) / 2,
+    (resize1 * 1.25) / 2 - viewport.width / 2,
+    (viewport.height * 1.25 - viewport.height) / 2,
   ];
   const scenario2 = [
-    (viewport.width * 0.5) / 2,
-    ((((height / window.innerHeight) * viewport.height) /
-      (width / window.innerWidth)) *
-      1.15) /
-      2,
+    (viewport.width * 1.25 - viewport.width) / 2,
+    (resize2 * 1.25) / 2 - viewport.height / 2,
   ];
-  if (viewport.height > viewport.width) {
+  if (width > height || viewport.height > viewport.width) {
     scale2 = scenario1;
   } else {
     scale2 = scenario2;
   }
   return scale2;
 };
-const GalleryItems: FC = () => {
+interface IGalleryItems {
+  nftData: GetNftMetadataResponse[];
+}
+const GalleryItems: FC<IGalleryItems> = ({ nftData }) => {
   const {
     distanceBtwnAssets,
     currentZoom,
     galleryItemIdx,
     setGalleryLength,
     viewingAbout,
+    zoomOut,
   } = galleryStore(
     (state) => ({
       zoomIn: state.zoomIn,
@@ -52,19 +55,18 @@ const GalleryItems: FC = () => {
       galleryLength: state.galleryLength,
       galleryItemIdx: state.galleryItemIdx,
       setGalleryLength: state.setGalleryLength,
-      setDistanceBtwnAssets: state.setDistanceBtwnAssets,
-      setShouldZoomIn: state.setShouldZoomIn,
     }),
     shallow
   );
 
-  const items = [1, 2, 3, 4, 5, 6, 7].map((i) => `./images/gallery/${i}.png`);
+  nftData = nftData?.length > 20 ? nftData.slice(0, 20) : nftData;
+  const items = nftData.map((i) => i.media[0].gateway);
   const textures = useLoader(THREE.TextureLoader, items);
   useEffect(() => {
     setGalleryLength(items.length);
   }, [items.length, setGalleryLength]);
 
-  useFrame(({ camera, mouse, size, viewport }, delta) => {
+  useFrame(({ camera, viewport }, delta) => {
     if (currentZoom === ZoomLevels.MaxZoom && !viewingAbout) {
       const [xBound, yBound] = generateZoomBounds({
         width: textures[galleryItemIdx].image.width,
@@ -86,7 +88,7 @@ const GalleryItems: FC = () => {
       camera.position.x = damp(
         camera.position.x,
         galleryItemIdx * distanceBtwnAssets,
-        4,
+        3,
         delta
       );
       camera.position.y = 0;
@@ -111,14 +113,7 @@ const GalleryItems: FC = () => {
 
   const savedPosition = useRef({ x: camera.position.x, y: camera.position.y });
   const bind = useGesture({
-    onDrag: ({
-      dragging,
-      initial,
-      first,
-      last,
-      movement: [mx, my],
-      velocity,
-    }) => {
+    onDrag: ({ dragging, first, last, movement: [mx, my], velocity }) => {
       if (currentZoom === ZoomLevels.MaxZoom) {
         if (first || (last && savedPosition.current)) {
           savedPosition.current.x = camera.position.x;
@@ -134,8 +129,16 @@ const GalleryItems: FC = () => {
         }
       }
     },
+    onWheel: ({ wheeling, movement: [_mx, my], direction: [_xDir, yDir] }) => {
+      if (wheeling && my > 100 && currentZoom === ZoomLevels.Zoom) {
+        const dir = yDir;
+        if (dir === 1) {
+          zoomOut();
+        }
+      }
+    },
   });
-
+  const { viewport } = useThree();
   useEffect(() => {
     if (currentZoom === ZoomLevels.MaxZoom) {
       maxZoomSpring.set({
@@ -144,11 +147,16 @@ const GalleryItems: FC = () => {
       });
     }
   }, [currentZoom, distanceBtwnAssets, galleryItemIdx, maxZoomSpring]);
-  const testRef = useRef(null);
+
+  useEffect(() => {
+    if (currentZoom === ZoomLevels.Zoom) {
+      camera.position.x = galleryItemIdx * distanceBtwnAssets;
+    }
+  }, [currentZoom, distanceBtwnAssets]);
 
   return (
     /* @ts-ignore */
-    <a.group ref={testRef} {...bind()}>
+    <a.group {...bind()}>
       {textures.map((i, idx) => {
         return <ImageItem isTouch={touch} key={idx} texture={i} idx={idx} />;
       })}

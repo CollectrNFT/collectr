@@ -1,5 +1,4 @@
 import {
-  Box,
   Menu,
   MenuButton,
   MenuItem,
@@ -8,19 +7,26 @@ import {
   Button,
 } from "@chakra-ui/react";
 import React from "react";
-import { useConnect } from "wagmi";
-
-interface Props {}
+import { Connector, useConnect } from "wagmi";
 
 export const ConnectWalletButton = () => {
   const [
     {
-      data: { connector, connectors },
-      loading,
+      data: { connectors },
     },
     connect,
   ] = useConnect();
 
+  return <Inner connectors={connectors} connect={connect} />;
+};
+
+export const Inner = ({
+  connectors,
+  connect,
+}: {
+  connectors: any;
+  connect: any;
+}) => {
   return (
     <Menu placement="bottom-end" gutter={0} matchWidth>
       <MenuButton
@@ -56,7 +62,7 @@ export const ConnectWalletButton = () => {
                       width="25px"
                       alt="wallet-connect-image"
                       mr="10px"
-                      src="./images/metamask.svg"
+                      src="/images/metamask.svg"
                     />
                   );
                 case "WalletConnect":
@@ -65,7 +71,7 @@ export const ConnectWalletButton = () => {
                       width="25px"
                       alt="metamask-image"
                       mr="10px"
-                      src="./images/walletconnect.svg"
+                      src="/images/walletconnect.svg"
                     />
                   );
                 default:

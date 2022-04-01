@@ -5,18 +5,18 @@ export interface GalleryState {
   currentZoom: number;
   galleryLength: number | undefined;
   galleryItemIdx: number;
-  shouldZoomIn: boolean;
   viewingAbout: boolean;
   showBar: boolean;
   progressValue: number;
   distanceBtwnAssets: number;
   walletAddress: string | undefined;
+  isEndGallery: boolean;
   zoomIn: () => void;
   zoomOut: () => void;
   setViewingAbout: () => void;
+  setIsEndGallery: (value: boolean) => void;
   setProgressValue: (value: number) => void;
   setShowBar: (value: boolean) => void;
-  setShouldZoomIn: (value: boolean) => void;
   setGalleryLength: (galleryLength: number) => void;
   setGalleryItemIdx: (galleryItemIdx: number) => void;
   setWalletAddress: (walletAddress: string) => void;
@@ -31,11 +31,11 @@ export enum ZoomLevels {
 
 const galleryStore = create<GalleryState>((set) => ({
   maxZoom: 2,
-  currentZoom: 1,
-  shouldZoomIn: true,
+  currentZoom: 0,
   galleryLength: undefined,
   galleryItemIdx: 0,
   showBar: false,
+  isEndGallery: false,
   viewingAbout: false,
   walletAddress: undefined,
   progressValue: 0,
@@ -45,26 +45,21 @@ const galleryStore = create<GalleryState>((set) => ({
       if (state.currentZoom < state.maxZoom) {
         ++state.currentZoom;
       }
-      if (state.currentZoom !== 0) {
-        state.setDistanceBtwnAssets(700);
-      }
     }),
   zoomOut: () =>
     set((state) => {
       if (state.currentZoom > 0) {
         --state.currentZoom;
       }
-      if (state.currentZoom === 0) {
-        state.setDistanceBtwnAssets(300);
-      }
     }),
+  setIsEndGallery: (value) => {
+    set((state) => {
+      state.isEndGallery = value;
+    });
+  },
   setViewingAbout: () =>
     set((state) => {
       state.viewingAbout = !state.viewingAbout;
-    }),
-  setShouldZoomIn: (value) =>
-    set((state) => {
-      state.shouldZoomIn = value;
     }),
   setShowBar: (value) =>
     set((state) => {

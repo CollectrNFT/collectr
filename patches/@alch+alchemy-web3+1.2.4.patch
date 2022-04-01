@@ -1,0 +1,22 @@
+diff --git a/node_modules/@alch/alchemy-web3/dist/esm/alchemy-apis/types.d.ts b/node_modules/@alch/alchemy-web3/dist/esm/alchemy-apis/types.d.ts
+index 123a02a..cc24b25 100644
+--- a/node_modules/@alch/alchemy-web3/dist/esm/alchemy-apis/types.d.ts
++++ b/node_modules/@alch/alchemy-web3/dist/esm/alchemy-apis/types.d.ts
+@@ -71,13 +71,13 @@ export interface NftMetadata {
+     image?: string;
+     attributes?: Array<Record<string, any>>;
+ }
+-export interface TokenUri {
++
++//patch for types
++export interface NftMedia {
+     raw: string;
+     gateway: string;
+ }
+-export interface NftMedia {
+-    uri?: TokenUri;
+-}
++
+ export interface NftContract {
+     address: string;
+ }

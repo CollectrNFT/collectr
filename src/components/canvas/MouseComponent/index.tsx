@@ -1,7 +1,7 @@
 import mousePositionStore, { Icons } from "@/stores/mousePositionStore";
-import { Box, useDisclosure } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useSpring, a } from "react-spring";
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import galleryStore, { ZoomLevels } from "@/stores/galleryStore";
 
 export const MouseComponent: FC = () => {
@@ -26,16 +26,18 @@ export const MouseComponent: FC = () => {
       const mouseX = e.clientX / (window.innerWidth / 2) - 1;
       const mouseY = e.clientY / (window.innerHeight / 2) - 1;
       if (currentZoom === ZoomLevels.Zoom && !viewingAbout) {
-        if (mouseX > 0.7 && mouseY < 0.3 && mouseY > -0.3) {
+        if (mouseX > 0.5 && mouseY < 0.75 && mouseY > -0.75) {
           setIcon(Icons.CursorRight);
-        } else if (mouseX < -0.7 && mouseY < 0.3 && mouseY > -0.3) {
+        } else if (mouseX < -0.5 && mouseY < 0.75 && mouseY > -0.75) {
           setIcon(Icons.CursorLeft);
         } else if (
-          (Math.abs(mouseX) < 0.7 && Math.abs(mouseX) > 0.6) ||
-          mouseY >= 0.3 ||
-          mouseY <= -0.3
+          (Math.abs(mouseX) < 0.5 && Math.abs(mouseX) > 0.4) ||
+          mouseY >= 0.75 ||
+          mouseY <= -0.75
         ) {
-          setIcon(Icons.CursorDefault);
+          if (icon !== Icons.CursorDefault) {
+            setIcon(Icons.CursorDefault);
+          }
         }
       } else {
         setIcon(Icons.CursorDefault);
@@ -46,26 +48,70 @@ export const MouseComponent: FC = () => {
     return () => {
       window.removeEventListener("mousemove", callback);
     };
-  }, [currentZoom, viewingAbout, setIcon]);
+  }, [currentZoom, viewingAbout, setIcon, icon]);
 
-  const { size, rectSize, rx } = useSpring({
-    size: icon === Icons.CursorDefault ? 16 : 64,
-    rectSize: icon === Icons.CursorDefault ? 15 : 63,
-    rx: icon === Icons.CursorDefault ? 7.5 : 31.5,
-  });
   const iconHandler = (icon: Icons) => {
     switch (icon) {
-      case Icons.CursorZoom:
-        return "M39.5858 23H33.6667V21H43V30.3333H41V24.4142L34.3738 31.0404L32.9596 29.6262L39.5858 23ZM31.0404 34.3738L24.4142 41H30.3333V43H21L21 33.6667L23 33.6667L23 39.5858L29.6262 32.9596L31.0404 34.3738Z";
       case Icons.CursorLeft:
-        return "M39.0711 31.0001L27.3432 31.0001L32.6646 25.6788L31.2504 24.2645L23.5148 32.0001L31.2504 39.7357L32.6646 38.3215L27.3432 33.0001L39.0711 33.0001L39.0711 31.0001Z";
+        return {
+          size: 64,
+          rectSize: 63,
+          rx: 31.5,
+          path: "M39.0711 31.0001L27.3432 31.0001L32.6646 25.6788L31.2504 24.2645L23.5148 32.0001L31.2504 39.7357L32.6646 38.3215L27.3432 33.0001L39.0711 33.0001L39.0711 31.0001Z",
+        };
       case Icons.CursorRight:
-        return "M24.9289 32.9999L36.6568 32.9999L31.3354 38.3212L32.7496 39.7355L40.4852 31.9999L32.7496 24.2643L31.3354 25.6785L36.6568 30.9999H24.9289L24.9289 32.9999Z";
+        return {
+          size: 64,
+          rectSize: 63,
+          rx: 31.5,
+          path: "M24.9289 32.9999L36.6568 32.9999L31.3354 38.3212L32.7496 39.7355L40.4852 31.9999L32.7496 24.2643L31.3354 25.6785L36.6568 30.9999H24.9289L24.9289 32.9999Z",
+        };
+      case Icons.CursorZoom:
+        return {
+          size: 24,
+          rectSize: 23,
+          rx: 11.5,
+          path: "",
+        };
       case Icons.CursorDefault:
       default:
-        return "";
+        return {
+          size: 16,
+          rectSize: 15,
+          rx: 7.5,
+          path: "",
+        };
     }
   };
+
+  const [iconProperties, setIconProperties] = useState({
+    size: 16,
+    rectSize: 15,
+    rx: 7.5,
+    path: "",
+  });
+
+  useEffect(() => {
+    setIconProperties(iconHandler(icon));
+  }, [icon]);
+
+  const { size, rectSize, rx } = useSpring({
+    size: iconProperties.size,
+    rectSize: iconProperties.rectSize,
+    rx: iconProperties.rx,
+  });
+
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="0.5" y="0.5" width="19" height="19" rx="9.5" fill="white" />
+    <rect x="0.5" y="0.5" width="19" height="19" rx="9.5" stroke="black" />
+  </svg>;
+
   return (
     <Box
       sx={{
@@ -95,7 +141,7 @@ export const MouseComponent: FC = () => {
         <a.path
           fillRule="evenodd"
           clipRule="evenodd"
-          d={iconHandler(icon)}
+          d={iconHandler(icon).path}
           fill="black"
         />
         <a.rect

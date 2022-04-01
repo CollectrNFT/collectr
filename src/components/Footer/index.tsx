@@ -1,15 +1,21 @@
-import { Box, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Link,
+  Stack,
+  Text,
+  useBreakpointValue as getBreakpoints,
+} from "@chakra-ui/react";
 import React from "react";
 import { SiDiscord, SiTwitter } from "react-icons/si";
 import { FooterLogo, Opensea } from "../SVG";
 interface Props {}
 
-export const Footer = () => {
+export const Footer = ({ borderTop = false }) => {
   const navItems = [
-    { title: "About", link: "/" },
-    { title: "Terms of Use", link: "/" },
-    { title: "Privacy Policy", link: "/" },
-    { title: "Help", link: "/" },
+    { title: "About", link: "/about" },
+    { title: "Terms of Use", link: "/tos" },
+    { title: "Privacy Policy", link: "/privacy" },
+    { title: "Help", link: "/help" },
   ];
 
   const externalNavItems = [
@@ -25,8 +31,18 @@ export const Footer = () => {
       icon: <SiTwitter size="24px" color="#000000" />,
     },
   ];
+  const TextBP = getBreakpoints({
+    base: "24",
+    md: "32",
+    lg: "32",
+    xl: "32",
+    "2xl": "32",
+  });
   return (
-    <Box px={["32px", null, "72px"]}>
+    <Box
+      px={["32px", null, "72px"]}
+      borderTop={borderTop ? "2px solid black" : ""}
+    >
       <Box
         display={"flex"}
         justifyContent="space-between"
@@ -44,12 +60,8 @@ export const Footer = () => {
         >
           {navItems.map((item) => {
             return (
-              <Link
-                fontSize={["1.5rem", null, null, null, "2rem"]}
-                href={item.link}
-                key={item.title}
-              >
-                {item.title}
+              <Link href={item.link} key={item.title}>
+                <Text variant={TextBP}>{item.title}</Text>
               </Link>
             );
           })}

@@ -4,14 +4,13 @@ import {
   Text,
   Image,
   VStack,
-  useBreakpointValue,
   LightMode,
+  useBreakpointValue as getBreakpoints,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
-
 import { Container } from "../components/Container";
 import { Navbar } from "../components/Navbar";
-import { MintMembershipPassButton } from "../components/Buttons/MintMembershipPass";
+import { PassCTAButton } from "../components/Buttons/PassCTA";
 import { CollectrLogo, DownArrow } from "../components/SVG";
 import { RiArrowRightLine } from "react-icons/ri";
 import { useRef, useState } from "react";
@@ -22,21 +21,23 @@ import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 
 import useScrollPositionOld from "@react-hook/window-scroll";
 import { config, useSpring } from "react-spring";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { ClientOnly } from "@/components/UtilityComponents/ClientOnly";
 const Home: NextPage = () => {
-  const collectrLogo = useBreakpointValue({
+  const collectrLogo = getBreakpoints({
     sm: { width: 300, height: 130 },
     md: { width: 500, height: 130 },
     lg: { width: 600, height: 130 },
     xl: { width: 874, height: 130 },
   });
-  const downArrow = useBreakpointValue({
+  const downArrow = getBreakpoints({
     sm: { width: 60, height: 69 },
     md: { width: 60, height: 69 },
     lg: { width: 80, height: 89 },
     xl: { width: 98, height: 99 },
   });
 
-  const collectionSize = useBreakpointValue({
+  const collectionSize = getBreakpoints({
     xs: 100,
     sm: 125,
     md: vwToPixel(14.3),
@@ -66,14 +67,7 @@ const Home: NextPage = () => {
       images: ["./images/08.jpg", "./images/11.jpg", "./images/01.jpg"],
     },
   ];
-  const [headerStyle, setHeaderStyle] = useState(`translate(0%,0%)`);
-  useScrollPosition(
-    ({ prevPos, currPos }) => {
-      setHeaderStyle(`translate(0px, ${Math.round(currPos.y * -0.2)}px)`);
-    },
-    [headerStyle]
-  );
-  const scrollY = useScrollPositionOld(100 /*fps*/);
+
   const ref = useRef<HTMLDivElement>(null);
   const collectionRef = useRef<HTMLDivElement>(null);
 
@@ -89,243 +83,267 @@ const Home: NextPage = () => {
     },
   });
 
-  if (!collectrLogo || !downArrow || !collectionSize) {
-    return <>Loading...</>;
-  }
   return (
     <LightMode>
-      <Box ref={ref} bg="white">
+      <Box position={"fixed"} width="100%">
         <Navbar />
-
-        <Box
-          display={"flex"}
-          alignItems="center"
-          willChange={"transform"}
-          minHeight={[
-            `calc(100vh - 60px)`,
-            `calc(100vh - 64px)`,
-            `calc(100vh - 100px)`,
-            `calc(100vh - 140px)`,
-          ]}
-        >
+        <ClientOnly>
           <Box
-            willChange={"transform"}
-            position={"relative"}
-            width="100%"
+            ref={ref}
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              transform: headerStyle,
+              transformStyle: "perserve-3d",
+              backfaceVisibility: "hidden",
+              perspective: "1px",
+              height: "91vh",
+              overflowY: "auto",
+              overflowX: "hidden",
             }}
           >
-            {/* Hero */}
-            <Box position="relative" flexGrow={1}>
+            <Box
+              display={"flex"}
+              alignItems="center"
+              minH={"100vh"}
+              sx={{
+                transform: "translateZ(-1px) scale(2)",
+                zIndex: "-1",
+              }}
+            >
               <Box
-                px="32px"
-                display="flex"
-                justifyContent="space-between"
-                flexDir={["column", null, null, "row"]}
+                position={"relative"}
+                width="100%"
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
               >
-                <Box display="flex" flexDir="column" alignItems="center">
+                {/* Hero */}
+                <Box position="relative" flexGrow={1}>
                   <Box
-                    display={"flex"}
-                    alignItems="center"
-                    width="100%"
-                    position={"relative"}
-                    pointerEvents={"none"}
+                    px="32px"
+                    display="flex"
+                    justifyContent="space-between"
+                    flexDir={["column", null, null, "row"]}
                   >
-                    <Box
-                      mt={["46px", null, "0px"]}
-                      display="flex"
-                      alignItems="center"
-                      position={"absolute"}
-                      zIndex={0}
-                      justifyContent={["flex-start", null, "center"]}
-                      width={[null, "64px", "100px", "140px"]}
-                    >
-                      <Text
-                        sx={{
-                          writingMode: "vertical-rl",
-                          transform: "rotate(-180deg)",
-                          color: "rgba(102, 102, 102, 1)",
-                        }}
+                    <Box display="flex" flexDir="column" alignItems="center">
+                      <Box
+                        display={"flex"}
+                        alignItems="center"
+                        width="100%"
+                        position={"relative"}
+                        pointerEvents={"none"}
                       >
-                        Deadfellaz x grelysian
-                      </Text>
-                    </Box>
+                        <Box
+                          mt={["46px", null, "0px"]}
+                          display="flex"
+                          alignItems="center"
+                          position={"absolute"}
+                          zIndex={0}
+                          justifyContent={["flex-start", null, "center"]}
+                          width={[null, "64px", "100px", "140px"]}
+                        >
+                          <Text
+                            sx={{
+                              writingMode: "vertical-rl",
+                              transform: "rotate(-180deg)",
+                              color: "rgba(102, 102, 102, 1)",
+                            }}
+                            variant={getBreakpoints({
+                              base: "12px",
+                              md: "14px",
+                              lg: "14px",
+                              xl: "14px",
+                              "2xl": "14px",
+                            })}
+                          >
+                            Deadfellaz x grelysian
+                          </Text>
+                        </Box>
 
-                    <Box
-                      mt={["46px", null, "0px"]}
-                      ml={[null, null, null, "140px"]}
-                      display="flex"
-                      justifyContent={["center", null, null, "unset"]}
-                      width="100%"
-                    >
-                      <Image
-                        alt="stock-image"
-                        width={["50%", "65%", "50%", "80%", "65%"]}
-                        src="./images/stock-nft.png"
-                      />
-                    </Box>
-                  </Box>
-                  <Box
-                    mt={["0px", null, "36px"]}
-                    alignSelf={["center", null, null, "normal"]}
-                  >
-                    <CollectrLogo {...collectrLogo} />
-                  </Box>
-                </Box>
-                <Box display="flex" flexDir="column" width="100%">
-                  <Box
-                    maxWidth={["100%", "370px"]}
-                    width="100%"
-                    display="flex"
-                    flexDir="column"
-                    alignItems="center"
-                    height="100%"
-                    alignSelf="center"
-                    justifyContent="center"
-                  >
-                    <Heading
-                      fontWeight="400"
-                      fontSize={["1.5rem", null, "2rem", null, "3rem"]}
-                      textAlign="center"
-                    >
-                      Art gallery for your NFT.
-                    </Heading>
-                    <VStack
-                      mt={["30px", null, "38px"]}
-                      gap="16px"
-                      maxWidth={["100%", "327px"]}
-                      width="100%"
-                    >
-                      <Box width="100%" height="56px">
-                        <MintMembershipPassButton />
+                        <Box
+                          mt={["46px", null, "0px"]}
+                          ml={[null, null, null, "140px"]}
+                          display="flex"
+                          justifyContent={["center", null, null, "unset"]}
+                          width="100%"
+                        >
+                          <Image
+                            alt="stock-image"
+                            width={["50%", "65%", "50%", "80%", "65%"]}
+                            src="./images/stock-nft.png"
+                          />
+                        </Box>
                       </Box>
-                    </VStack>
-                  </Box>
-                  <Box
-                    onClick={() => {
-                      const t =
-                        collectionRef.current?.getBoundingClientRect().top!;
-                      y.set(t);
-                    }}
-                    display="flex"
-                    mt={["20px", null, "30px", null, "0px"]}
-                    mb={["20px", null, "30px", null, "0px"]}
-                    justifyContent={["center", null, null, "flex-end"]}
-                  >
-                    <DownArrow {...downArrow} />
+                      <Box
+                        mt={["0px", null, "36px"]}
+                        alignSelf={["center", null, null, "normal"]}
+                      >
+                        <CollectrLogo {...collectrLogo} />
+                      </Box>
+                    </Box>
+                    <Box display="flex" flexDir="column" width="100%">
+                      <Box
+                        maxWidth={["100%", "370px"]}
+                        width="100%"
+                        display="flex"
+                        flexDir="column"
+                        alignItems="center"
+                        height="100%"
+                        alignSelf="center"
+                        justifyContent="center"
+                      >
+                        <Heading
+                          fontWeight="500"
+                          fontSize={["1.5rem", null, "2rem", null, "3rem"]}
+                          textAlign="center"
+                        >
+                          Art gallery for your NFT.
+                        </Heading>
+                        <VStack
+                          mt={["30px", null, "38px"]}
+                          gap="16px"
+                          maxWidth={["100%", "327px"]}
+                          width="100%"
+                        >
+                          <Box width="100%" height="56px">
+                            <PassCTAButton />
+                          </Box>
+                        </VStack>
+                      </Box>
+                      <Box
+                        onClick={() => {
+                          const t =
+                            collectionRef.current?.getBoundingClientRect().top!;
+                          y.set(t);
+                        }}
+                        display="flex"
+                        mt={["20px", null, "30px", null, "0px"]}
+                        mb={["20px", null, "30px", null, "0px"]}
+                        justifyContent={["center", null, null, "flex-end"]}
+                      >
+                        <DownArrow {...downArrow} />
+                      </Box>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
             </Box>
-          </Box>
-        </Box>
-        {/* Collection */}
-        <Box
-          color="black"
-          ref={collectionRef}
-          position={"relative"}
-          bg="white"
-          borderTop={"2px solid black"}
-        >
-          {mainPageCollections.map((collection) => {
-            return (
-              <Container
-                key={collection.title}
+            <Box
+              sx={{
+                height: "100%",
+                width: "100%",
+                position: "absolute",
+              }}
+            >
+              {/* Collection */}
+              <Box
+                color="black"
+                ref={collectionRef}
+                position={"relative"}
                 bg="white"
-                _hover={{ color: "#FFFFFF", background: "#000000" }}
-                sx={{ transitionDuration: "0.5s" }}
-                cursor="pointer"
+                borderTop={"2px solid black"}
               >
-                <Box>
-                  {collection.main && (
-                    <Text
-                      mb="88px"
-                      pt={["10px", null, "0"]}
-                      display="flex"
-                      justifyContent={"flex-start"}
-                      fontWeight="500"
-                      fontSize={["2rem", null, "3rem"]}
+                {mainPageCollections.map((collection) => {
+                  return (
+                    <Container
+                      key={collection.title}
+                      bg="white"
+                      _hover={{ color: "#FFFFFF", background: "#000000" }}
+                      sx={{ transitionDuration: "0.5s" }}
+                      cursor="pointer"
                     >
-                      Featured Collections
-                    </Text>
-                  )}
-                  <Box
-                    display="flex"
-                    alignItems={["unset", null, null, "center"]}
-                    justifyContent="space-between"
-                    flexDir={["column", null, null, "row"]}
-                  >
-                    <Box maxWidth="564px">
-                      <Text fontWeight="500" fontSize="1.125rem">
-                        {collection.account}
-                      </Text>
-                      <Text
-                        lineHeight={["3rem", null, "5rem"]}
-                        fontSize={["3rem", null, "5rem"]}
-                        fontWeight="500"
-                      >
-                        {collection.title}
-                      </Text>
-                      <Box display={["none", null, null, "inherit"]}>
-                        <RiArrowRightLine size={"6em"} />
+                      <Box>
+                        {collection.main && (
+                          <Text
+                            mb="88px"
+                            pt={["10px", null, "0"]}
+                            display="flex"
+                            justifyContent={"flex-start"}
+                            variant={getBreakpoints({
+                              base: "32",
+                              lg: "48",
+                              xl: "48",
+                              "2xl": "48",
+                            })}
+                          >
+                            Explore Collections
+                          </Text>
+                        )}
+                        <Box
+                          display="flex"
+                          alignItems={["unset", null, null, "center"]}
+                          justifyContent="space-between"
+                          flexDir={["column", null, null, "row"]}
+                        >
+                          <Box maxWidth="564px">
+                            <Text fontWeight="500" fontSize="1.125rem">
+                              {collection.account}
+                            </Text>
+                            <Text
+                              lineHeight={["3rem", null, "5rem"]}
+                              fontSize={["3rem", null, "5rem"]}
+                              fontWeight="500"
+                            >
+                              {collection.title}
+                            </Text>
+                            <Box display={["none", null, null, "inherit"]}>
+                              <RiArrowRightLine size={"6em"} />
+                            </Box>
+                          </Box>
+                          <Box
+                            mt={["24px", null, "36px", "0px"]}
+                            mr={[
+                              `-${collectionSize! / 2 + 32}px`,
+                              null,
+                              null,
+                              `-${collectionSize! / 2 + 72}px`,
+                            ]}
+                            display="flex"
+                            justifyContent={"space-between"}
+                            width={["unset", null, null, "60vw", null, "50vw"]}
+                          >
+                            {collection.images?.map((image, imageIdx) => {
+                              return (
+                                <ImageContainer
+                                  key={image}
+                                  collectionSize={collectionSize!}
+                                  image={image}
+                                />
+                              );
+                            })}
+                          </Box>
+                        </Box>
                       </Box>
-                    </Box>
-                    <Box
-                      mt={["24px", null, "36px", "0px"]}
-                      mr={[
-                        `-${collectionSize! / 2 + 32}px`,
-                        null,
-                        null,
-                        `-${collectionSize! / 2 + 72}px`,
-                      ]}
-                      display="flex"
-                      justifyContent={"space-between"}
-                      width={["unset", null, null, "60vw", null, "50vw"]}
-                    >
-                      {collection.images?.map((image, imageIdx) => {
-                        return (
-                          <ImageContainer
-                            key={image}
-                            collectionSize={collectionSize!}
-                            image={image}
-                          />
-                        );
-                      })}
-                    </Box>
-                  </Box>
-                </Box>
+                    </Container>
+                  );
+                })}
+              </Box>
+              {/* View All Collection */}
+              <Container
+                bg="white"
+                color="black"
+                _hover={{ color: "#FFFFFF", background: "#000000" }}
+                cursor="pointer"
+                display={"flex"}
+                alignItems={["flex-end", "center"]}
+                justifyContent="space-between"
+                sx={{ transitionDuration: "0.5s", py: "40px" }}
+              >
+                <Text
+                  lineHeight={["3rem", null, "5rem"]}
+                  fontWeight="500"
+                  fontSize={["3rem", null, "5rem"]}
+                >
+                  View All Collections
+                </Text>
+                <RiArrowRightLine size={"6em"} />
               </Container>
-            );
-          })}
-        </Box>
-        {/* View All Collection */}
-        <Container
-          bg="white"
-          color="black"
-          position="relative"
-          _hover={{ color: "#FFFFFF", background: "#000000" }}
-          cursor="pointer"
-          display={"flex"}
-          alignItems={["flex-end", "center"]}
-          justifyContent="space-between"
-          sx={{ transitionDuration: "0.5s", py: "40px" }}
-        >
-          <Text
-            lineHeight={["3rem", null, "5rem"]}
-            fontWeight="500"
-            fontSize={["3rem", null, "5rem"]}
-          >
-            View All Collections
-          </Text>
-          <RiArrowRightLine size={"6em"} />
-        </Container>
-        {/* Footer */}
-        <Box bg="white" color="black" position="relative">
-          <Footer />
-        </Box>
+              {/* Footer */}
+              <Box bg="white" color="black" width="100%" position={"relative"}>
+                <Footer />
+              </Box>
+            </Box>
+          </Box>
+        </ClientOnly>
       </Box>
     </LightMode>
   );

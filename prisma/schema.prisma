@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id     String     @id @default(uuid())
+  bio    String?
+  username String @unique
+  user   User    @relation(fields: [walletAddress], references: [walletAddress])
+  walletAddress String     @unique
+  email String
+  passTokenId String
+  sendEmail Boolean @default(false)
+}
+
+model User {
+  id      String      @id @default(uuid())
+  walletAddress   String   @unique
+  profile Profile?
+  collections Collection[]
+}
+
+model Collection {
+  id        String      @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  description String?
+  lightMode Boolean  @default(true)
+  published Boolean  @default(false)
+  collectr    User     @relation(fields: [walletAddress], references: [walletAddress])
+  walletAddress  String
+  theme String @default("Gallery")
+  NFTs NFT[]
+}
+
+model NFT {
+  id String @id @default(uuid())
+  contract String
+  tokenId Int
+  url String? //might be able to save this url for faster retrieval?
+  collection Collection @relation(fields: [collectionId], references: [id])
+  collectionId String
+}
+
+

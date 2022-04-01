@@ -1,3 +1,4 @@
+import { parseNFTImage } from "@/common/utils";
 import { Box, Image } from "@chakra-ui/react";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 
@@ -22,8 +23,34 @@ export const ImageContainer: FC<IImageContainer> = ({
       justifyContent="center"
     >
       <Box display="flex" alignItems="center" objectFit="contain">
-        {
-          <Image
+        <Box
+          sx={{
+            "& > img": {
+              maxW: `${collectionSize}px`,
+              maxH: `${collectionSize}px`,
+              ...(isSquare && {
+                height: "auto",
+                width: `${0.75 * collectionSize}px`,
+              }),
+            },
+            "& > div > svg": {
+              width: `${collectionSize}px`,
+              height: `${collectionSize}px`,
+              ...(isSquare && {
+                height: "auto",
+                width: `${0.75 * collectionSize}px`,
+              }),
+            },
+          }}
+        >
+          {parseNFTImage(image)}
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+{
+  /* <Image
             alt="image"
             src={image}
             maxW={`${collectionSize}px`}
@@ -35,9 +62,5 @@ export const ImageContainer: FC<IImageContainer> = ({
               }),
             }}
             ref={imageRef}
-          />
-        }
-      </Box>
-    </Box>
-  );
-};
+          /> */
+}

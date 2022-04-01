@@ -12,6 +12,9 @@ import {
 } from "wagmi";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { SWRConfig } from "swr";
+import { Fonts } from "@/components/UtilityComponents/Fonts";
+import Script from "next/script";
+import { CheckIfConnected } from "@/components/UtilityComponents/CheckIfConnected";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [...defaultChains, ...defaultL2Chains, ...developmentChains];
@@ -27,6 +30,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   ];
   return (
     <ChakraProvider theme={theme}>
+      <Fonts />
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"
+        strategy="beforeInteractive"
+      />
+
+      <Script src="/scripts/CustomEase.min.js" strategy="beforeInteractive" />
+      <Script src="/scripts/gsap.min.js" strategy="beforeInteractive" />
+      <Script
+        src="/scripts/MorphSVGPlugin.min.js"
+        strategy="beforeInteractive"
+      />
       <SWRConfig
         value={{
           fetcher: (resource, init) =>

@@ -4,7 +4,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Image,
   Button,
   PlacementWithLogical,
 } from "@chakra-ui/react";
@@ -13,6 +12,19 @@ import { useAccount, useConnect, useEnsLookup } from "wagmi";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { truncateAddress } from "../../../common/utils";
 import { Logout } from "../../SVG";
+
+const ConnectedIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="7.99992" cy="8.00016" r="6.66667" fill="#21DF21" />
+  </svg>
+);
+
 export const ConnectedButton = ({
   placement = "bottom-start",
 }: {
@@ -27,18 +39,24 @@ export const ConnectedButton = ({
     (ens && ens.length > 11 ? truncateAddress(ens, 4) : ens) ||
     "0x" + truncateAddress(data?.address.slice(2), 3);
 
-  const ConnectedIcon = () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="7.99992" cy="8.00016" r="6.66667" fill="#21DF21" />
-    </svg>
+  return (
+    <Inner
+      placement={placement}
+      accountName={accountName}
+      disconnect={disconnect}
+    />
   );
+};
 
+export const Inner = ({
+  placement,
+  accountName,
+  disconnect,
+}: {
+  placement: PlacementWithLogical;
+  accountName: string;
+  disconnect: () => void;
+}) => {
   return (
     <Menu placement={placement} gutter={0}>
       <MenuButton

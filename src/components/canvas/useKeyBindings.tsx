@@ -11,7 +11,6 @@ export const useKeyBindings = () => {
     galleryLength,
     galleryItemIdx,
     setGalleryItemIdx,
-    setShouldZoomIn,
     setViewingAbout,
     zoomIn,
     zoomOut,
@@ -25,7 +24,6 @@ export const useKeyBindings = () => {
       setViewingAbout: state.setViewingAbout,
       setGalleryItemIdx: state.setGalleryItemIdx,
       setGalleryLength: state.setGalleryLength,
-      setShouldZoomIn: state.setShouldZoomIn,
       zoomIn: state.zoomIn,
       zoomOut: state.zoomOut,
     }),
@@ -69,7 +67,6 @@ export const useKeyBindings = () => {
     "esc",
     () => {
       zoomOut();
-      setShouldZoomIn(false);
     },
     { enabled: currentZoom === ZoomLevels.MaxZoom && !viewingAbout }
   );
